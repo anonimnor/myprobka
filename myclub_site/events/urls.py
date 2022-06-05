@@ -2,11 +2,9 @@
 
 from django.urls import path, re_path
 from . import views
-from . import mydbupdates
-from . import mybotwebactions
-from . import mystatistics
 from . import myProbks
 from . import myprobksCheck
+from . import myprobksSender
 
 # urlpatterns = [
     # path('', views.index, name='index'),
@@ -17,6 +15,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('myprobks/', myProbks.probkShowHTML, name='myprobkshtml'),
     path('myprobksCheck/', myprobksCheck.probkShowHTML, name='myprobkscheck'),
+    path('myprobksSender/', myprobksSender.probkShowHTML, name='myprobkssender'),
     path('myprobksjson/', myProbks.probkShowJson, name='myprobksjson'),
     
     # path('<int:year>/<str:month>/', views.index, name='index'),
