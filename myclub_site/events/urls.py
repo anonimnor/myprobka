@@ -6,6 +6,7 @@ from . import mydbupdates
 from . import mybotwebactions
 from . import mystatistics
 from . import myProbks
+from . import myprobksCheck
 
 # urlpatterns = [
     # path('', views.index, name='index'),
@@ -14,23 +15,8 @@ from . import myProbks
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('updateVidPatterns/', mydbupdates.updateVdiPatterns, name='updateVdiPatterns'),
-    path('botkill/', mybotwebactions.botkill, name='botkill'),
-    path('botstart/', mybotwebactions.botstart, name='botstart'),
-    path('botcheck/', mybotwebactions.botcheck, name='botcheck'),
-    path('botlog/', mybotwebactions.botlog, name='botlog'),
-    path('clearlog/', mybotwebactions.clearlog, name='clearlog'),
-
-    path('dailystats/', mystatistics.dailystats, name='dailystats'),
-    path('userstats/', mystatistics.userstats, name='userstats'),
-    path('vidstats/', mystatistics.vidstats, name='vidstats'),
-    path('actionstats/', mystatistics.actionstats, name='actionstats'),
-    path('gbstats/', mystatistics.gbstats, name='gbstats'),
-    
-    path('mytest/', mybotwebactions.mytest, name='mytest'),
-    
-    path('events/', views.all_events, name='show-events'),
     path('myprobks/', myProbks.probkShowHTML, name='myprobkshtml'),
+    path('myprobksCheck/', myprobksCheck.probkShowHTML, name='myprobkscheck'),
     path('myprobksjson/', myProbks.probkShowJson, name='myprobksjson'),
     
     # path('<int:year>/<str:month>/', views.index, name='index'),
