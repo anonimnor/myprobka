@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  webx:
+    build: .
+    command: python myclub_site/manage.py runserver 0.0.0.0:8003
+    volumes:
+      - .:/code
+    ports:
+      - "8003:8003"

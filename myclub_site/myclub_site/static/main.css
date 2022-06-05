@@ -1,0 +1,110 @@
+@charset "utf-8";
+#header {
+    border-style: none;
+    width: 800px;
+    height: auto;
+}
+#wrapper {
+    margin-top: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #FFFFFF;
+    width: 800px;   
+}
+body {
+    background-color: #E0E0E0;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 0.9em;
+    text-align: justify;
+    color: #474747;
+}
+h1 {
+      color: #270c39;
+      margin: 0px 0px 10px 0px;
+      clear: left;
+}
+#footer {
+    text-align: center;
+    font-size: 0.8em;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #FFFFFF;
+    border-top: thin solid #BBBBBB;
+    clear: both;
+    color: #969696;
+    position: fixed;
+    /* left: 0; */
+    bottom: 0;
+    width: 100%;
+    /* background-color: red; */
+    /* color: white; */
+    text-align: center;
+}
+#nav ul {
+      margin: 0px;
+}
+#nav li {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      font-size: 1em;
+      list-style-type: none;
+      border-bottom: thin solid #e0e0e0;
+      color: #1e9d36;
+      left: 0px;
+      list-style-position: inside;
+      float:left;
+      margin:15px
+}
+#nav li a, #top_menu a {
+      text-decoration: none;
+      color: #6688aa     
+}
+#nav li a:visited, #top_menu a:visited {
+      color: #557799     
+}
+#nav li a:hover, #top_menu a:hover {
+      color: #99aabb
+}
+#rightsidebar {
+/*      width: 180px;
+      height: 350px;
+      float: right;
+      padding-right: 20px; */
+}
+#main {
+      margin: 10px 10px 50px 20px;   
+      padding-right: 10px;
+      padding-bottom: 50px;
+}
+#logo {
+      padding: 10px;
+      width:100%;
+      text-align:center;
+      height:300px;
+}
+#logo img{
+      width:300px;
+}
+#top_menu {
+      text-align:center;
+      font-size: 1.2em;
+      color: #270c39;
+}
+#top_header {
+      text-align:center;
+}
+table.month td {
+      border: 1px solid rgb(221, 221, 221);
+      padding: 20px;
+      text-align: center;
+}
+table.month th {
+      padding: 2px 0px;
+      text-align: center;
+}
+th.month {
+      display: none;
+} 
+.p {
+	width:100% !important;
+}
