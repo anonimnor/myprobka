@@ -15,4 +15,6 @@ from django.db import models
 
 @admin.register(MyUser)
 class MyUserAdmin(admin.ModelAdmin):
-    list_display = ('username')
+    list_display = ('username',)
+
+
