@@ -144,3 +144,13 @@ STATICFILES_DIRS = [BASE_DIR / 'myclub_site/static']
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = [
+    '192.168.1.50',
+    '192.168.1.11',
+    '192.168.1.*',
+    '10.8.*',
+    '10.0.0.1',
+    'localhost',
+    'homeip.ydns.eu',
+]

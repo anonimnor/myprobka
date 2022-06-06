@@ -1,0 +1,199 @@
+<html>
+<head>
+  <!-- скрипт, который генерирует графы через myOneGraphBuilder.py, 
+  получает оттуда JSON, и отправляет затем запросы JSON в myProbks.py, 
+  чтоб проверить отработку отрисовки пробок по графам (и её скорость) -->
+  <script>
+  var myCounter, myCounterP = 0; // счётчики графов...  
+
+  function graphHandle(jsonOrHtml) { // обрабатывает сгенерированные графы;
+    let now = new Date();
+    let handleTimeStart = now.getTime();
+    let handleTimeStartOneGraph = now.getTime();
+    let numGraphs=document.querySelector('#myCount').value;
+    document.querySelector("#graphHandleButtJson").style.display='none';
+    document.querySelector("#graphHandleButtHtml").style.display='none';
+    myAllGraphs = document.querySelectorAll('#myOneResult');
+    myAllGraphs.forEach(function(myCurrGraph) {
+      let xhr = new XMLHttpRequest();
+      let myUrl = "http://localhost:8003/probkShowHtml/";
+      if(jsonOrHtml){
+        myUrl = "http://localhost:8003/probkShowJson/";
+      }
+      xhr.open("POST", myUrl, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) { // 200 = ok вроде..
+          let now = new Date();
+          console.log('...GRAPH '+myCounter+' HANDLED...'+Math.floor((now.getTime()-handleTimeStartOneGraph)/100));
+          myCounter--;
+          myCurrGraph.innerHTML = ''+this.responseText;
+//          if(jsonOrHtml){
+            $(myCurrGraph).css('width', 'auto');
+            $(myCurrGraph).css('height', 'auto');
+//          }
+          if(myCounter==0){
+            console.log('!..ALL '+myCounterP+' GRAPHS HANDLED..! '+Math.floor((now.getTime()-handleTimeStart)/100));
+          }
+        }else{
+          // console.log('WRONG! No answer, code200!='+xhr.status+' - state4!='+xhr.readyState);
+        }
+      };
+      var data = myCurrGraph.innerHTML;
+      let now = new Date();
+      let handleTimeStartOneGraph = now.getTime();
+      xhr.send(data);
+    });
+  }
+
+  function graphGen() {
+    let now = new Date();
+    let handleTimeStart = now.getTime();
+    myCounter = 0;
+    console.log('!..GRAPHGEN STARTED..!');
+    let numGraphs=document.querySelector('#myCount').value;
+    let myResult = document.querySelector('.graphsResult')
+    // alert('ГЕНЕРИРУЕТСЯ ГРАФОВ: '+numGraphs);
+    myResult.innerHTML = '';
+    let url = "http://localhost:8003/myOneGraphBuilder"
+    for(i=1;i<=numGraphs;i++){ 
+      myUrl = url+'?test=test&'+Math.random()
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", myUrl, true);
+      xhr.setRequestHeader("Content-Type", "application/html");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) { // 200 = ok вроде..
+          myResult.innerHTML += '<div class="oneresult" id="myOneResult">'+this.responseText+'</div>'
+          myCounter++;
+          let now = new Date();
+          console.log('...GRAPH '+myCounter+' GENERATED...'+Math.floor((now.getTime()-handleTimeStart)/100));
+          if(myCounter==numGraphs){
+            console.log('!..ALL '+myCounter+' GRAPHS GENERATED..! '+Math.floor((now.getTime()-handleTimeStart)/100));
+            myCounterP=myCounter;
+          }
+        }else{
+          // console.log('No answer from myOneGraphBuilder = '+xhr.status+' - state4!='+xhr.readyState);
+        }
+      };
+      data = "test=test123"+Math.random();
+      xhr.send(data);
+    }
+    myResult.innerHTML += '<button class="oneresult" id="graphHandleButtHtml" style="cursor:pointer" onClick="graphHandle(0);return false;">ОБРАБОТАТЬ<br />ГРАФЫ<br />В HTML...</button>';
+    myResult.innerHTML += '<button class="oneresult" id="graphHandleButtJson" style="cursor:pointer" onClick="graphHandle(1);return false;">ОБРАБОТАТЬ<br />ГРАФЫ<br />В JSON...</button>';
+  }
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body style="text-align:center;font-family:Calibri,Arial" id="body">
+ <div style="text-align:left;margin:20px">
+  <h1>ПРОВЕРКА РАБОТОСПОСОБНОСТИ ОТРИСОВКИ ПРОБОК НА ШУМЕ.</h1>
+  <p style="font-weight:bold;color:#556677">
+    Модуль писан с целью проверки работоспособности и отказоустойчивости 
+    <br />
+    системы отрисовки пробок на картах по графам; 
+    <br />
+    сначала задайте входные условия:
+    <ul>
+      <li>к-во девайсов, запрашивающих данные через графы, </li>
+      <li>минимальную и максимальную ширину/высоту областей карты в градусах (lat/lng)</li>
+      <li>и в координатах (второе значение из JSON, UDM - user-defined metrics), </li>
+      <li>минимальную и максимальную мощности графов, уровень насыщенности),</li>
+      <li>опции шума (отрицательные, нулевые, отсутствующие значения, неполные JSON)</li>
+  </ul>
+  </p>
+  <hr>
+  
+  <style>
+    .mydiv {width:200px;padding:0 10px 10px 10px;margin:5px;border:2px solid #446688;border-radius:5px;float:left;min-height:140px}
+    .mydiv_group1 {width:200px;padding:0 10px 10px 10px;margin:5px;border:2px solid #88aa88;border-radius:5px;float:left;min-height:140px}
+    .mydiv_group2 {width:200px;padding:0 10px 10px 10px;margin:5px;border:2px solid #8888aa;border-radius:5px;float:left;min-height:140px}
+    .mydiv_group3 {width:200px;padding:0 10px 10px 10px;margin:5px;border:2px solid #aa8888;border-radius:5px;float:left;min-height:140px}
+    .graphsresult {color:#886644;font-size:20px;border:2px solid #aa0000;border-radius:10px;padding:20px;display:table}
+    .oneresult {color:#884400;font-size:9px;border:2px solid #660000;border-radius:10px;padding:20px;width:100px;height:100px;float:left;padding:10px;margin:5px;overflow:hidden}
+  </style>
+  
+  <form id="mySendForm">
+  <div class="mydiv"><p>К-во графов генерим единовременно: </p>
+    <input type="text" id="myCount" value="100">
+  </div>
+  <div class="mydiv"><p>Мин.вершин графа: </p>
+    <input type="text" id="myNumPointsMin" value="0">
+  </div>
+  <div class="mydiv"><p>Макс.вершин графа: </p>
+    <input type="text" id="myNumPointsMax" value="100">
+  </div>
+  <div class="mydiv"><p>Графы двунаправлены (1/0): </p>
+    <input type="text" id="myGraphReversed" value="1">
+  </div>
+  <div class="mydiv_group1"><p>Мин.ширина картинки, px: </p>
+    <input type="text" id="myMinPxX" value="10">
+  </div>
+  <div class="mydiv_group1"><p>Макс.ширина картинки, px: </p>
+    <input type="text" id="myMaxPxX" value="500">
+  </div>
+  <div class="mydiv_group1"><p>Мин.высота картинки, px: </p>
+    <input type="text" id="myMinPxY" value="10">
+  </div>
+  <div class="mydiv_group1"><p>Макс.высота картинки, px: </p>
+    <input type="text" id="myMaxPxY" value="500">
+  </div>
+  <div class="mydiv_group2"><p>Мин.высота области карты, (мин. "высота города") грд. (lat) (1~100км): </p>
+    <input type="text" id="myMinCityLat" value="1">
+  </div>
+  <div class="mydiv_group2"><p>Макс.высота области карты, (макс. "высота города") грд. (lat) (10~1000км): </p>
+    <input type="text" id="myMaxCityLat" value="10">
+  </div>
+  <div class="mydiv_group2"><p>Мин.ширина области карты, (мин. "ширина города") грд. (lng) (1~50км): </p>
+    <input type="text" id="myMinCityLng" value="1">
+  </div>
+  <div class="mydiv_group2"><p>Макс.ширина области карты, (макс. "ширина города") грд. (lng) (10~500км): </p>
+    <input type="text" id="myMaxCityLng" value="10">
+  </div>
+  <div class="mydiv_group3"><p>Мин. области карты, (минимум-низ "центра города") грд. (lat): (0 = экватор)</p>
+    <input type="text" id="myMinLat" value="1">
+  </div>
+  <div class="mydiv_group3"><p>Макс. области карты, (максимум-верх "центра города") грд. (lat): (90 = полюс)</p>
+    <input type="text" id="myMaxLat" value="90">
+  </div>
+  <div class="mydiv_group3"><p>Мин. области карты, (минимум-лево "центра города") грд. (lng): (0 = гринвич)</p>
+    <input type="text" id="myMinLng" value="1">
+  </div>
+  <div class="mydiv_group3"><p>Макс. области карты, (максимум-право "центра города") грд. (lng): (180 = контр-гринвич)</p>
+    <input type="text" id="myMaxLng" value="180">
+  </div>
+
+ 
+  <div class="mydiv"><p>Мин.высота области карты, (мин. "высота города") Udm (м.?): </p>
+    <input type="text" id="myMinCityUdmH" value="1">
+  </div>
+  <div class="mydiv"><p>Макс.высота области карты, (макс. "высота города") Udm (м.?): </p>
+    <input type="text" id="myMaxCityUdmH" value="1000">
+  </div>
+  <div class="mydiv"><p>Мин.ширина области карты, (мин. "ширина города") Udm (м.?): </p>
+    <input type="text" id="myMinCityUdmW" value="1">
+  </div>
+  <div class="mydiv"><p>Макс.ширина области карты, (макс. "ширина города") Udm (м.?): </p>
+    <input type="text" id="myMaxCityUdmW" value="1000">
+  </div>
+  <div class="mydiv_group1"><p>Мин. области карты, (минимум-низ "центра города") Udm (м.?):</p>
+    <input type="text" id="myMinUdmH" value="1">
+  </div>
+  <div class="mydiv_group1"><p>Макс. области карты, (максимум-верх "центра города") Udm (м.?):</p>
+    <input type="text" id="myMaxUdmH" value="41882880">
+  </div>
+  <div class="mydiv_group1"><p>Мин. области карты, (минимум-лево "центра города") Udm (м.?):</p>
+    <input type="text" id="myMinUdmW" value="1">
+  </div>
+  <div class="mydiv_group1"><p>Макс. области карты, (максимум-право "центра города") Udm (м.?):</p>
+    <input type="text" id="myMaxUdmW" value="75079570">
+  </div>
+  <button class="mydiv" style="cursor:pointer" onClick="graphGen();return false;">СГЕНЕРИРОВАТЬ<br />ГРАФЫ...</button>
+  </form>
+  <div style="clear:left"></div>
+  <hr>
+  <h2> СГЕНЕРИРОВАННЫЕ ГРАФЫ: </h2>
+  <div id="graphsResult" class="graphsResult">
+    ...сгенерируйте графы...
+  </div>
+  
+ </div></body></html>

@@ -107,7 +107,7 @@ class myImage:
                 foreground = Image.open(myFileName)
             except:
                 logger.info('except3 '+str(time.time()))
-                foreground = Image.new("RGB", (int(width), int(height))) # здесь надо бы грузить картинку "ХОРОШЕГО ДНЯ!", чёнить.. ориентир по флагу myFakeImg, если JSON не прогрузился, напр.
+                foreground = Image.new("RGB", (int(width), int(height))) # здесь надо бы грузить картинку "ХОРОШЕГО ДНЯ!", чёнить.. ориентир по флагу myFakeImg, если jsOn не прогрузился, напр.
 
         if(myNight): # ночной режим
             foreground = ImageOps.invert(foreground.convert('RGB'))
@@ -119,18 +119,20 @@ class myImage:
         self.draw = ImageDraw.Draw(self.img)
         logger.info('............. !!! init of myImage class, width: %s, height: %s, myScale: %s, minGeo: %s, maxGeo: %s, midGeo: %s ', str(width), str(height), str(myScale), str(minGeo), str(maxGeo), str(midGeo))
 
-@csrf_exempt
-def probkShowFromJsonOrUrl(request, myUrl = False, jsonRequest='{}', htmlExpected = False):
-    ''' показываем пробки из JSON, если об этом просят, или из URL, если об этом просят; 
-        вывод - картинка в формате JSON, если не htmlExpected, иначе html с картинками '''
-    def getJsonCachedFromUrl(myUrl, mySec = 15, myJsonStorage = './myJsonStorage'):
+def probkShowJson(request): # удалить потом, ненужная функция...
+    jsOnCode='{test}'
+    return HttpResponse(jsOnCode, content_type='application/json')
+
+def probkShowHTML(request):
+
+    def getJsOnCached(myUrl, mySec = 15, myJsOnStorage = './myJsOnStorage'):
         """ if more than mySec passed since last get of myUrl, tries to refresh data by getting it from myUrl (then stores to local file);
         otherwise, gets data from local file """
-        myJsonText='{}'
-        if not os.path.exists(myJsonStorage):
-            os.makedirs(myJsonStorage)
+        myJsOnText='{}'
+        if not os.path.exists(myJsOnStorage):
+            os.makedirs(myJsOnStorage)
         myCleanUrlText=str(re.sub('[^\w\-_\. ]', '_', myUrl)) # для имени файла - очистка строки от дряни.. можно бы ещё подрезать (начало обрезать...)
-        myFileName = myJsonStorage+'/myJson_'+myCleanUrlText+'.txt'
+        myFileName = myJsOnStorage+'/myJsOn_'+myCleanUrlText+'.txt'
         try:
             stats = os.stat(myFileName)
             myFileTime = stats.st_mtime
@@ -143,9 +145,9 @@ def probkShowFromJsonOrUrl(request, myUrl = False, jsonRequest='{}', htmlExpecte
         if((time.time()-myFileTime)>mySec):
             try:
                 response = requests.get(myUrl) # здесь ещё, видимо, timeout чёто указать, чтоль... 
-                myJsonText = response.text
+                myJsOnText = response.text
                 my_file = open(myFileName, "w+")
-                my_file.write(str(myJsonText))
+                my_file.write(str(myJsOnText))
                 my_file.close()
             except:
                 weReadFile=True
@@ -155,11 +157,11 @@ def probkShowFromJsonOrUrl(request, myUrl = False, jsonRequest='{}', htmlExpecte
         if(weReadFile):
             try: # возможно, инициализация файлом ещё не прошла ни разу...
                 my_file = open(myFileName, "r")
-                myJsonText = my_file.read()
+                myJsOnText = my_file.read()
                 my_file.close()
             except: # случай, когда камера ещё не запустилась; надо бы здесь предусмотреть также вариант, когда камера выведена из строя.... время больше чем час напр. 
-                myJsonText = '{}'
-        return myJsonText
+                myJsOnText = '{}'
+        return myJsOnText
 
     def getMinMaxCoords(allNodes):
         """of [10,10], [20,50], [100,40] - returns [10,10],[100,50] boundaries"""
@@ -186,15 +188,14 @@ def probkShowFromJsonOrUrl(request, myUrl = False, jsonRequest='{}', htmlExpecte
 
     logger.info(' =============== init of probkShowHTML! =============== ')
 
-    if(not myUrl): # код JSON получен напрямую запросом...
-        jsonText = jsonRequest
-    else: # код JSON добываем из URL.. - url пока статический.!
-        jsonText = getJsonCachedFromUrl(myUrl)
-    myJson = json.loads(jsonText)
+    # response = requests.get("https://mob-aks.com/graphFull.json")
+    # myJsOn = json.loads(response.text)
+    jsOnText = getJsOnCached("https://mob-aks.com/graphFull.json")
+    myJsOn = json.loads(jsOnText)
 
     preResampleScale = 3.5 # от начального масштаба зависит уровень сглаживания (чем больше тут число, тем глаже, - но медленнее..)
-    resampleMethod=Image.LANCZOS # здесь возможны - LANCZOS, BILINEAR.. BICUBIC, ещё что-то возможно... (LANCZOS видимо самый медленный...)
-    imgWprt, imgHprt = myJson["image"]['width'], myJson["image"]['height']
+    resampleMethod=Image.LANCZOS # от этого тоже зависит скорость/качество; здесь возможны - LANCZOS, BILINEAR.. BICUBIC, ещё что-то возможно... (LANCZOS видимо самый медленный...)
+    imgWprt, imgHprt = myJsOn["image"]['width'], myJsOn["image"]['height']
     imgW, imgH = preResampleScale * imgWprt, preResampleScale * imgHprt # юзаем увеличенную карту, потом сожмём для anti-aliasing сглаживания..
 
     mymess+=" - timeSpent1 : "+str(time.time()-myTimeStart)
@@ -202,9 +203,9 @@ def probkShowFromJsonOrUrl(request, myUrl = False, jsonRequest='{}', htmlExpecte
     allNodesGeo=[] # соберём все точки Geo-координат lng/lat, чтоб границы зоны очертить... (представлено с ошибкой вроде.. вида 55.7389525936213 = lat = Y, 37,61455801 = lng = X)
     allNodesOur=[] # а так же и точки в неясной системе координат, представленные как 4188783.732476062 (недо-UTM какаято... ну окэ..)
     
-    myNodes=myJson["graph"]['nodes']
-    myLinks=myJson["graph"]['links']
-    myLoads=myJson["loads"]
+    myNodes=myJsOn["graph"]['nodes']
+    myLinks=myJsOn["graph"]['links']
+    myLoads=myJsOn["loads"]
 
     # ЗАМЕТКИ:
     # LAT - LATITUDE - ШИРОТА - угол между макушкой чоловека и плоскостью экватора (на экваторе = 0, вниз от экватора - отрицательное, вверх - положительное, до 90с градусов)
@@ -299,36 +300,13 @@ def probkShowFromJsonOrUrl(request, myUrl = False, jsonRequest='{}', htmlExpecte
 
     mymess+=" - timeSpentTotal : "+str(time.time()-myTimeStart)
 
-    if(not htmlExpected): # возвращаем JSON-картинку одну....
-        jsonCode='{"image": "'+base64.b64encode(img_file_our.getvalue()).decode('utf-8')+'"}'
-        return HttpResponse(jsonCode, content_type='application/json')
-    else: # возврат html с картинками...
-        context = {
-            'img_str_geo': base64.b64encode(img_file_geo.getvalue()).decode('utf-8'), # возвращаются и показываются в html обе картинки, т.к. неизвестно, чего там надобно.
-            'img_str_our': base64.b64encode(img_file_our.getvalue()).decode('utf-8'), # <--- видимо всётаки надобна - ВТОРАЯ. (т.е. эта.)
-            'mymess': mymess,
-        }
-        return render(request, 
-            'events/probks_template.html', 
-            context=context
-        )
+    context = {
+        'img_str_geo': base64.b64encode(img_file_geo.getvalue()).decode('utf-8'),
+        'img_str_our': base64.b64encode(img_file_our.getvalue()).decode('utf-8'),
+        'mymess': mymess,
+    }
+    return render(request,
+        'events/probks_template.html',
+        context=context
+    )
 
-@csrf_exempt # предотвращает "отторжение" post-запросов с других серверов без токенов. - пока что у нас защиты нет.
-def probkShowJson(request): 
-    myJsonRequest=""+request.body.decode('UTF-8') # .body чтоль тут.. неуверен.. ( но работает..
-    return probkShowFromJsonOrUrl(request, False, myJsonRequest)
-
-@csrf_exempt
-def probkShowHtml(request): 
-    myJsonRequest=""+request.body.decode('UTF-8')
-    return probkShowFromJsonOrUrl(request, False, myJsonRequest, True)
-
-@csrf_exempt
-def probkShowJsonFromUrl(request): # запрос request воспринимается как URL, из которого (по которому) мы достаём код JSON; пример - https://www.mob-aks.com/graphFull.json
-    myURL = request.GET['URL']
-    return probkShowFromJsonOrUrl(request, myURL, '{}')
-
-@csrf_exempt
-def probkShowHtmlFromUrl(request):
-    myURL = request.GET['URL']
-    return probkShowFromJsonOrUrl(request, myURL, '{}', True)

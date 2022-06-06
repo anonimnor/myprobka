@@ -5,20 +5,22 @@ from . import views
 from . import myProbks
 from . import myprobksCheck
 from . import myprobksSender
-
-# urlpatterns = [
-    # path('', views.index, name='index'),
-#    path('<int:year>/<str:month>/', views.index, name='index'),
-# ]
+# from . import myprobksJson
+from . import myprobksJsonTest
+from . import myGraphBuilder
+from . import myOneGraphBuilder
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('myprobks/', myProbks.probkShowHTML, name='myprobkshtml'),
+    
+    path('probkShowJson/', myProbks.probkShowJson, name='myprobkshowjson'),
+    path('probkShowHtml/', myProbks.probkShowHtml, name='myprobkshowhtml'),
+    path('probkShowJsonFromUrl/', myProbks.probkShowJsonFromUrl, name='probkshowjsonfromurl'), # запросы вида http://localhost:8003/probkShowHtmlFromUrl/?URL=https://www.mob-aks.com/graphFull.json
+    path('probkShowHtmlFromUrl/', myProbks.probkShowHtmlFromUrl, name='probkshowhtmlfromurl'), # запросы вида http://localhost:8003/probkShowHtmlFromUrl/?URL=https://www.mob-aks.com/graphFull.json
+
     path('myprobksCheck/', myprobksCheck.probkShowHTML, name='myprobkscheck'),
     path('myprobksSender/', myprobksSender.probkShowHTML, name='myprobkssender'),
-    path('myprobksjson/', myProbks.probkShowJson, name='myprobksjson'),
-    
-    # path('<int:year>/<str:month>/', views.index, name='index'),
-    #  re_path(r'^(?P<year>[0-9]{4})/(?P<month>0?[1-9]|1[0-2])/', views.index, name='index'),
-    re_path(r'^(?P<year>[0-9]{4})/(?P<month>0?[1-9]|1[0-2])/', views.index, name='index'),
+    path('myprobksJsonTest/', myprobksJsonTest.probkShowHTML, name='myprobksjsontest'),
+    path('myGraphBuilder/', myGraphBuilder.showHTML, name='mygraphbuilder'),
+    path('myOneGraphBuilder/', myOneGraphBuilder.showHTML, name='myonegraphbuilder'),
 ]
