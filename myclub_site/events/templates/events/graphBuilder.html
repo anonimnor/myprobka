@@ -16,9 +16,9 @@
     myAllGraphs = document.querySelectorAll('#myOneResult');
     myAllGraphs.forEach(function(myCurrGraph) {
       let xhr = new XMLHttpRequest();
-      let myUrl = "http://localhost:8003/probkShowHtml/";
+      let myUrl = "http://homeip.ydns.eu:8003/probkShowHtml/";
       if(jsonOrHtml){
-        myUrl = "http://localhost:8003/probkShowJson/";
+        myUrl = "http://homeip.ydns.eu:8003/probkShowJson/";
       }
       xhr.open("POST", myUrl, true);
       xhr.setRequestHeader("Content-Type", "application/json");
@@ -55,7 +55,7 @@
     let myResult = document.querySelector('.graphsResult')
     // alert('ГЕНЕРИРУЕТСЯ ГРАФОВ: '+numGraphs);
     myResult.innerHTML = '';
-    let url = "http://localhost:8003/myOneGraphBuilder"
+    let url = "http://homeip.ydns.eu:8003/myOneGraphBuilder"
     for(i=1;i<=numGraphs;i++){ 
       myUrl = url+'?test=test&'+Math.random()
       let xhr = new XMLHttpRequest();
