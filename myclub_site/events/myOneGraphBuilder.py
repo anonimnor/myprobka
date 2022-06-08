@@ -1,5 +1,7 @@
-# \myclub_root\events\myprobksCheck.py
-# скрипт пока отображает хоть чегото.
+# \myclub_root\events\myOneGraphBuilder.py
+# скрипт будет генерить графы произвольно в зависимости от переданного. 
+# пока что генерирует два графа всего, (+ разнятся размерами картинки.)
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.dispatch import receiver
@@ -9,7 +11,8 @@ import math, random
 def showHTML(request):
     # mymess = "{test}"+str(request)
 
-    '''{
+    ''' пример того, что должен генерировать.
+    {
 	"graph": { 
 	    "nodes": [
               {

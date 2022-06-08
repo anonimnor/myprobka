@@ -1,5 +1,6 @@
-# \myclub_root\events\myprobksCheck.py
-# скрипт пока отображает хоть чегото.
+# \myclub_root\events\myGraphBuilder.py
+# скрипт для отображения форм на построение графов, - вся информация в шаблоне, поэтому скрипт пустой.
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.dispatch import receiver

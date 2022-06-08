@@ -1,5 +1,6 @@
 # \myclub_root\events\myprobksJsonTest.py
-# скрипт возвращает то же, что в него отправили, json
+# проверочный микроскрипт, возвращает то же, что в него отправили, json.
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.dispatch import receiver

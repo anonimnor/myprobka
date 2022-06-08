@@ -1,5 +1,6 @@
-# \myclub_root\events\myprobksCheck.py
-# скрипт пока отображает хоть чегото.
+# \myclub_root\events\myprobksSender.py
+# проверочный микроскрипт, отображает {test}; в дальнейшем предполагается использовать для отправки графов с пробками..
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.dispatch import receiver

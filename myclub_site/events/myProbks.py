@@ -1,5 +1,7 @@
 # \myclub_root\events\myProbks.py
-# скрипт пока отображает хоть чегото.
+# основной скрипт, который генерирует картинку из JSON, переданного напрямую, - или из URL, содержащего JSON;
+# картинка генерится в составе html-документа, или также в виде JSON.
+# (всё в зависимости от URL - см. urls.py, и вид вызова - состав функций внизу этого файла...)
 
 from calendar import c
 from django.shortcuts import render
@@ -27,8 +29,8 @@ logger.info('---------------- init of myProbks.py at myProbkas.log -------------
 
 class myImage:
     def arrowedLine(self, ptA, ptB, width=10, color=(0,255,0), outline='#000000'):
-        """Draw line from ptA to ptB with arrowhead at ptB and arrowhollow at ptA, of width, color and outline,
-        returns updated image"""
+        """ функция рисует линию из ptA в ptB, со стрелочкой в ptB и оперением в ptA, цвета color, границы outline, 
+            отработав, обновляет картинку класса.. """
         width = width*(self.xScale+self.yScale)/2
         xA, yA = ptA
         xB, yB = ptB
@@ -50,8 +52,8 @@ class myImage:
         return self.img
 
     def circle(self, ptA, width=0.001, color=(255,0,0), outline='#000000'):
-        """Draw circle at ptA, of width with color and outline, 
-        returns updated image"""
+        """ функция рисует круг в ptA радиуса width, цвета color, граница цвета outline, 
+            отработав, обновляет картинку класса... """
         logger.info(' circle drawing, %s ',[ptA, width, self.xScale, self.yScale, self.xStart, self.yStart])
         width = width*(self.xScale+self.yScale)/2
         ptAx, ptAy = ptA
@@ -123,9 +125,11 @@ class myImage:
 def probkShowFromJsonOrUrl(request, myUrl = False, jsonRequest='{}', htmlExpected = False):
     ''' показываем пробки из JSON, если об этом просят, или из URL, если об этом просят; 
         вывод - картинка в формате JSON, если не htmlExpected, иначе html с картинками '''
+
     def getJsonCachedFromUrl(myUrl, mySec = 15, myJsonStorage = './myJsonStorage'):
-        """ if more than mySec passed since last get of myUrl, tries to refresh data by getting it from myUrl (then stores to local file);
-        otherwise, gets data from local file """
+        """ если с последнего запроса myUrl прошло больше чем mySec секунд, обновляет данные из myUrl (и затем сохраняет локально в файл);
+            иначе, грузит данные из файла, чтобы не гонять зря поток; 
+            (предполагается, что пробки обновляются не чаще, чем, например, раз в 15 сек.) """
         myJsonText='{}'
         if not os.path.exists(myJsonStorage):
             os.makedirs(myJsonStorage)
@@ -162,7 +166,7 @@ def probkShowFromJsonOrUrl(request, myUrl = False, jsonRequest='{}', htmlExpecte
         return myJsonText
 
     def getMinMaxCoords(allNodes):
-        """of [10,10], [20,50], [100,40] - returns [10,10],[100,50] boundaries"""
+        """ если например сюда переданы [10,10], [20,50], [100,40] - возвращает [10,10],[100,50] - границы зоны """
         if(allNodes):
             minX, minY = allNodes[0]
             maxX, maxY = allNodes[0]

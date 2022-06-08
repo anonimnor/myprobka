@@ -1,5 +1,5 @@
 # \myclub_root\events\myprobksCheck.py
-# скрипт пока отображает хоть чегото.
+# проверочный микроскрипт, отображает просто {test}
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.dispatch import receiver
